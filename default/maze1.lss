@@ -1,0 +1,214 @@
+
+maze1.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         000000c6  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .debug_aranges 00000020  00000000  00000000  0000011a  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  2 .debug_pubnames 0000001b  00000000  00000000  0000013a  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  3 .debug_info   00000145  00000000  00000000  00000155  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  4 .debug_abbrev 000000d5  00000000  00000000  0000029a  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_line   000001aa  00000000  00000000  0000036f  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_frame  00000020  00000000  00000000  0000051c  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_str    000000ae  00000000  00000000  0000053c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_loc    00000028  00000000  00000000  000005ea  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_ranges 00000048  00000000  00000000  00000612  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	12 c0       	rjmp	.+36     	; 0x26 <__ctors_end>
+   2:	19 c0       	rjmp	.+50     	; 0x36 <__bad_interrupt>
+   4:	18 c0       	rjmp	.+48     	; 0x36 <__bad_interrupt>
+   6:	17 c0       	rjmp	.+46     	; 0x36 <__bad_interrupt>
+   8:	16 c0       	rjmp	.+44     	; 0x36 <__bad_interrupt>
+   a:	15 c0       	rjmp	.+42     	; 0x36 <__bad_interrupt>
+   c:	14 c0       	rjmp	.+40     	; 0x36 <__bad_interrupt>
+   e:	13 c0       	rjmp	.+38     	; 0x36 <__bad_interrupt>
+  10:	12 c0       	rjmp	.+36     	; 0x36 <__bad_interrupt>
+  12:	11 c0       	rjmp	.+34     	; 0x36 <__bad_interrupt>
+  14:	10 c0       	rjmp	.+32     	; 0x36 <__bad_interrupt>
+  16:	0f c0       	rjmp	.+30     	; 0x36 <__bad_interrupt>
+  18:	0e c0       	rjmp	.+28     	; 0x36 <__bad_interrupt>
+  1a:	0d c0       	rjmp	.+26     	; 0x36 <__bad_interrupt>
+  1c:	0c c0       	rjmp	.+24     	; 0x36 <__bad_interrupt>
+  1e:	0b c0       	rjmp	.+22     	; 0x36 <__bad_interrupt>
+  20:	0a c0       	rjmp	.+20     	; 0x36 <__bad_interrupt>
+  22:	09 c0       	rjmp	.+18     	; 0x36 <__bad_interrupt>
+  24:	08 c0       	rjmp	.+16     	; 0x36 <__bad_interrupt>
+
+00000026 <__ctors_end>:
+  26:	11 24       	eor	r1, r1
+  28:	1f be       	out	0x3f, r1	; 63
+  2a:	cf e5       	ldi	r28, 0x5F	; 95
+  2c:	d4 e0       	ldi	r29, 0x04	; 4
+  2e:	de bf       	out	0x3e, r29	; 62
+  30:	cd bf       	out	0x3d, r28	; 61
+  32:	02 d0       	rcall	.+4      	; 0x38 <main>
+  34:	46 c0       	rjmp	.+140    	; 0xc2 <_exit>
+
+00000036 <__bad_interrupt>:
+  36:	e4 cf       	rjmp	.-56     	; 0x0 <__vectors>
+
+00000038 <main>:
+#define F_CPU 8000000UL // define cpu frequency for delay function
+#include <avr/io.h>
+#include <util/delay.h>
+int main()
+{
+  38:	1f 93       	push	r17
+	DDRB=0XFF; //PORTB as output Port connected to motors
+  3a:	8f ef       	ldi	r24, 0xFF	; 255
+  3c:	87 bb       	out	0x17, r24	; 23
+	DDRC=0X00; //PORTC Input port connected to Sensors
+  3e:	14 ba       	out	0x14, r1	; 20
+		
+		if(LS==0b00000001 && CS==0b00000000 && RS==0b00000000)		//L=white C=black R=black
+		PORTB=0b00001010;		//LF(B1)=1 LB(B2)=0 RF(B3)=1 RB(B4)=0
+		
+		if(LS==0b00000000 && CS==0b00000010 && RS==0b00000100)		//L=black C=white R=white
+		PORTB=0b00001100;		//LF(B1)=0 LB(B2)=1 RF(B3)=1 RB(B4)=0
+  40:	6c e0       	ldi	r22, 0x0C	; 12
+    milliseconds can be achieved.
+ */
+void
+_delay_loop_2(uint16_t __count)
+{
+	__asm__ volatile (
+  42:	a8 ec       	ldi	r26, 0xC8	; 200
+  44:	b0 e0       	ldi	r27, 0x00	; 0
+		
+		if(LS==0b00000001 && CS==0b00000000 && RS==0b00000100)		//L=white C=black R=white
+		PORTB=0b00001010;		//LF(B1)=1 LB(B2)=0 RF(B3)=1 RB(B4)=0
+		
+		if(LS==0b00000001 && CS==0b00000010 && RS==0b00000000)		//L=white C=white R=black
+		PORTB=0b00010010;		//LF(B1)=1 LB(B2)=0 RF(B3)=0 RB(B4)=1
+  46:	12 e1       	ldi	r17, 0x12	; 18
+		
+		if(LS==0b00000000 && CS==0b00000010 && RS==0b00000100)		//L=black C=white R=white
+		PORTB=0b00001100;		//LF(B1)=0 LB(B2)=1 RF(B3)=1 RB(B4)=0
+		
+		if(LS==0b00000001 && CS==0b00000000 && RS==0b00000100)		//L=white C=black R=white
+		PORTB=0b00001010;		//LF(B1)=1 LB(B2)=0 RF(B3)=1 RB(B4)=0
+  48:	7a e0       	ldi	r23, 0x0A	; 10
+	DDRB=0XFF; //PORTB as output Port connected to motors
+	DDRC=0X00; //PORTC Input port connected to Sensors
+
+	while(1) // infinite loop
+	{
+		int LS=PINC&0b00000001;	// mask PC0 bit of Port C
+  4a:	83 b3       	in	r24, 0x13	; 19
+		int CS=PINC&0b00000010;	// mask PC1 bit of Port C
+  4c:	93 b3       	in	r25, 0x13	; 19
+  4e:	49 2f       	mov	r20, r25
+  50:	50 e0       	ldi	r21, 0x00	; 0
+  52:	42 70       	andi	r20, 0x02	; 2
+  54:	50 70       	andi	r21, 0x00	; 0
+		int RS=PINC&0b00000100;	// mask PC2 bit of Port C
+  56:	93 b3       	in	r25, 0x13	; 19
+  58:	29 2f       	mov	r18, r25
+  5a:	30 e0       	ldi	r19, 0x00	; 0
+  5c:	24 70       	andi	r18, 0x04	; 4
+  5e:	30 70       	andi	r19, 0x00	; 0
+
+		if(LS==0b00000000 && CS==0b00000000 && RS==0b00000000)		//L(C0)=black C(C1)=black R(C2)=black
+  60:	80 fd       	sbrc	r24, 0
+  62:	0a c0       	rjmp	.+20     	; 0x78 <__SREG__+0x39>
+  64:	41 15       	cp	r20, r1
+  66:	51 05       	cpc	r21, r1
+  68:	19 f0       	breq	.+6      	; 0x70 <__SREG__+0x31>
+		PORTB=0b00001100;		//LF(B1)=0 LB(B2)=1 RF(B3)=1 RB(B4)=0
+
+		if(LS==0b00000000 && CS==0b00000000 && RS==0b00000100)		//L=black C=black R=white
+		PORTB=0b00001100;		//LF(B1)=0 LB(B2)=1 RF(B3)=1 RB(B4)=0
+
+		if(LS==0b00000000 && CS==0b00000010 && RS==0b00000000)		//L=black C=white R=black
+  6a:	42 30       	cpi	r20, 0x02	; 2
+  6c:	51 05       	cpc	r21, r1
+  6e:	69 f7       	brne	.-38     	; 0x4a <__SREG__+0xb>
+  70:	21 15       	cp	r18, r1
+  72:	31 05       	cpc	r19, r1
+  74:	41 f4       	brne	.+16     	; 0x86 <__SREG__+0x47>
+  76:	0a c0       	rjmp	.+20     	; 0x8c <__SREG__+0x4d>
+		PORTB=0b00001100;		//LF(B1)=0 LB(B2)=1 RF(B3)=1 RB(B4)=0
+		
+		if(LS==0b00000001 && CS==0b00000000 && RS==0b00000000)		//L=white C=black R=black
+  78:	41 15       	cp	r20, r1
+  7a:	51 05       	cpc	r21, r1
+  7c:	71 f4       	brne	.+28     	; 0x9a <__SREG__+0x5b>
+  7e:	21 15       	cp	r18, r1
+  80:	31 05       	cpc	r19, r1
+  82:	31 f4       	brne	.+12     	; 0x90 <__SREG__+0x51>
+  84:	08 c0       	rjmp	.+16     	; 0x96 <__SREG__+0x57>
+		PORTB=0b00001010;		//LF(B1)=1 LB(B2)=0 RF(B3)=1 RB(B4)=0
+		
+		if(LS==0b00000000 && CS==0b00000010 && RS==0b00000100)		//L=black C=white R=white
+  86:	24 30       	cpi	r18, 0x04	; 4
+  88:	31 05       	cpc	r19, r1
+  8a:	f9 f6       	brne	.-66     	; 0x4a <__SREG__+0xb>
+		PORTB=0b00001100;		//LF(B1)=0 LB(B2)=1 RF(B3)=1 RB(B4)=0
+  8c:	68 bb       	out	0x18, r22	; 24
+  8e:	dd cf       	rjmp	.-70     	; 0x4a <__SREG__+0xb>
+		
+		if(LS==0b00000001 && CS==0b00000000 && RS==0b00000100)		//L=white C=black R=white
+  90:	24 30       	cpi	r18, 0x04	; 4
+  92:	31 05       	cpc	r19, r1
+  94:	d1 f6       	brne	.-76     	; 0x4a <__SREG__+0xb>
+		PORTB=0b00001010;		//LF(B1)=1 LB(B2)=0 RF(B3)=1 RB(B4)=0
+  96:	78 bb       	out	0x18, r23	; 24
+  98:	d8 cf       	rjmp	.-80     	; 0x4a <__SREG__+0xb>
+		
+		if(LS==0b00000001 && CS==0b00000010 && RS==0b00000000)		//L=white C=white R=black
+  9a:	42 30       	cpi	r20, 0x02	; 2
+  9c:	51 05       	cpc	r21, r1
+  9e:	a9 f6       	brne	.-86     	; 0x4a <__SREG__+0xb>
+  a0:	21 15       	cp	r18, r1
+  a2:	31 05       	cpc	r19, r1
+  a4:	11 f4       	brne	.+4      	; 0xaa <__SREG__+0x6b>
+		PORTB=0b00010010;		//LF(B1)=1 LB(B2)=0 RF(B3)=0 RB(B4)=1
+  a6:	18 bb       	out	0x18, r17	; 24
+  a8:	d0 cf       	rjmp	.-96     	; 0x4a <__SREG__+0xb>
+		
+		if(LS==0b00000001 && CS==0b00000010 && RS==0b00000100)		//L=white C=white R=white
+  aa:	24 30       	cpi	r18, 0x04	; 4
+  ac:	31 05       	cpc	r19, r1
+  ae:	69 f6       	brne	.-102    	; 0x4a <__SREG__+0xb>
+		{
+			PORTB=0b00001100;		//LF(B1)=0 LB(B2)=1 RF(B3)=1 RB(B4)=0
+  b0:	68 bb       	out	0x18, r22	; 24
+  b2:	80 e2       	ldi	r24, 0x20	; 32
+  b4:	9e e4       	ldi	r25, 0x4E	; 78
+  b6:	fd 01       	movw	r30, r26
+  b8:	31 97       	sbiw	r30, 0x01	; 1
+  ba:	f1 f7       	brne	.-4      	; 0xb8 <__SREG__+0x79>
+		__ticks = (uint16_t) (__ms * 10.0);
+		while(__ticks)
+		{
+			// wait 1/10 ms
+			_delay_loop_2(((F_CPU) / 4e3) / 10);
+			__ticks --;
+  bc:	01 97       	sbiw	r24, 0x01	; 1
+		__ticks = 1;
+	else if (__tmp > 65535)
+	{
+		//	__ticks = requested delay in 1/10 ms
+		__ticks = (uint16_t) (__ms * 10.0);
+		while(__ticks)
+  be:	d9 f7       	brne	.-10     	; 0xb6 <__SREG__+0x77>
+  c0:	c4 cf       	rjmp	.-120    	; 0x4a <__SREG__+0xb>
+
+000000c2 <_exit>:
+  c2:	f8 94       	cli
+
+000000c4 <__stop_program>:
+  c4:	ff cf       	rjmp	.-2      	; 0xc4 <__stop_program>

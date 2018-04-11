@@ -1,0 +1,151 @@
+
+mazeaka.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         0000008a  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .debug_aranges 00000020  00000000  00000000  000000de  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  2 .debug_pubnames 0000001b  00000000  00000000  000000fe  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  3 .debug_info   000000ac  00000000  00000000  00000119  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  4 .debug_abbrev 00000064  00000000  00000000  000001c5  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_line   000000ce  00000000  00000000  00000229  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_frame  00000020  00000000  00000000  000002f8  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_str    0000006d  00000000  00000000  00000318  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	12 c0       	rjmp	.+36     	; 0x26 <__ctors_end>
+   2:	19 c0       	rjmp	.+50     	; 0x36 <__bad_interrupt>
+   4:	18 c0       	rjmp	.+48     	; 0x36 <__bad_interrupt>
+   6:	17 c0       	rjmp	.+46     	; 0x36 <__bad_interrupt>
+   8:	16 c0       	rjmp	.+44     	; 0x36 <__bad_interrupt>
+   a:	15 c0       	rjmp	.+42     	; 0x36 <__bad_interrupt>
+   c:	14 c0       	rjmp	.+40     	; 0x36 <__bad_interrupt>
+   e:	13 c0       	rjmp	.+38     	; 0x36 <__bad_interrupt>
+  10:	12 c0       	rjmp	.+36     	; 0x36 <__bad_interrupt>
+  12:	11 c0       	rjmp	.+34     	; 0x36 <__bad_interrupt>
+  14:	10 c0       	rjmp	.+32     	; 0x36 <__bad_interrupt>
+  16:	0f c0       	rjmp	.+30     	; 0x36 <__bad_interrupt>
+  18:	0e c0       	rjmp	.+28     	; 0x36 <__bad_interrupt>
+  1a:	0d c0       	rjmp	.+26     	; 0x36 <__bad_interrupt>
+  1c:	0c c0       	rjmp	.+24     	; 0x36 <__bad_interrupt>
+  1e:	0b c0       	rjmp	.+22     	; 0x36 <__bad_interrupt>
+  20:	0a c0       	rjmp	.+20     	; 0x36 <__bad_interrupt>
+  22:	09 c0       	rjmp	.+18     	; 0x36 <__bad_interrupt>
+  24:	08 c0       	rjmp	.+16     	; 0x36 <__bad_interrupt>
+
+00000026 <__ctors_end>:
+  26:	11 24       	eor	r1, r1
+  28:	1f be       	out	0x3f, r1	; 63
+  2a:	cf e5       	ldi	r28, 0x5F	; 95
+  2c:	d4 e0       	ldi	r29, 0x04	; 4
+  2e:	de bf       	out	0x3e, r29	; 62
+  30:	cd bf       	out	0x3d, r28	; 61
+  32:	02 d0       	rcall	.+4      	; 0x38 <main>
+  34:	28 c0       	rjmp	.+80     	; 0x86 <_exit>
+
+00000036 <__bad_interrupt>:
+  36:	e4 cf       	rjmp	.-56     	; 0x0 <__vectors>
+
+00000038 <main>:
+#define F_CPU 8000000UL // define cpu frequency for delay function
+#include <avr/io.h>
+#include <util/delay.h>
+int main()
+{
+	DDRB=0XFF; //PORTB as output Port connected to motors
+  38:	8f ef       	ldi	r24, 0xFF	; 255
+  3a:	87 bb       	out	0x17, r24	; 23
+	DDRC=0X00; //PORTC Input port connected to Sensors
+  3c:	14 ba       	out	0x14, r1	; 20
+		int LS=PINC&0b00000001;	// mask PC0 bit of Port C
+		int CS=PINC&0b00000010;	// mask PC1 bit of Port C
+		int RS=PINC&0b00000100;	// mask PC2 bit of Port C
+
+		if(LS==0b00000000)		//L(C0)=black
+		PORTB=0b00001100;		//LF(B1)=0 LB(B2)=1 RF(B3)=1 RB(B4)=0
+  3e:	6c e0       	ldi	r22, 0x0C	; 12
+		if(LS==0b00000001 && RS==0b00000000)		//L=white R=black
+		PORTB=0b00001010;		//LF(B1)=1 LB(B2)=0 RF(B3)=0 RB(B4)=1
+		
+		if(LS==0b00000001 && CS==0b00000000 && RS==0b00000100)		//L=white R=white C=black
+		{
+			PORTB=0b00010010;	//LF(B1)=1 LB(B2)=0 RF(B3)=1 RB(B4)=0
+  40:	e2 e1       	ldi	r30, 0x12	; 18
+
+		if(LS==0b00000000)		//L(C0)=black
+		PORTB=0b00001100;		//LF(B1)=0 LB(B2)=1 RF(B3)=1 RB(B4)=0
+		
+		if(LS==0b00000001 && RS==0b00000000)		//L=white R=black
+		PORTB=0b00001010;		//LF(B1)=1 LB(B2)=0 RF(B3)=0 RB(B4)=1
+  42:	7a e0       	ldi	r23, 0x0A	; 10
+	DDRB=0XFF; //PORTB as output Port connected to motors
+	DDRC=0X00; //PORTC Input port connected to Sensors
+
+	while(1) // infinite loop
+	{
+		int LS=PINC&0b00000001;	// mask PC0 bit of Port C
+  44:	83 b3       	in	r24, 0x13	; 19
+		int CS=PINC&0b00000010;	// mask PC1 bit of Port C
+  46:	93 b3       	in	r25, 0x13	; 19
+  48:	49 2f       	mov	r20, r25
+  4a:	50 e0       	ldi	r21, 0x00	; 0
+  4c:	42 70       	andi	r20, 0x02	; 2
+  4e:	50 70       	andi	r21, 0x00	; 0
+		int RS=PINC&0b00000100;	// mask PC2 bit of Port C
+  50:	93 b3       	in	r25, 0x13	; 19
+  52:	29 2f       	mov	r18, r25
+  54:	30 e0       	ldi	r19, 0x00	; 0
+  56:	24 70       	andi	r18, 0x04	; 4
+  58:	30 70       	andi	r19, 0x00	; 0
+
+		if(LS==0b00000000)		//L(C0)=black
+  5a:	80 ff       	sbrs	r24, 0
+  5c:	12 c0       	rjmp	.+36     	; 0x82 <__SREG__+0x43>
+		PORTB=0b00001100;		//LF(B1)=0 LB(B2)=1 RF(B3)=1 RB(B4)=0
+		
+		if(LS==0b00000001 && RS==0b00000000)		//L=white R=black
+  5e:	21 15       	cp	r18, r1
+  60:	31 05       	cpc	r19, r1
+  62:	09 f4       	brne	.+2      	; 0x66 <__SREG__+0x27>
+		PORTB=0b00001010;		//LF(B1)=1 LB(B2)=0 RF(B3)=0 RB(B4)=1
+  64:	78 bb       	out	0x18, r23	; 24
+		
+		if(LS==0b00000001 && CS==0b00000000 && RS==0b00000100)		//L=white R=white C=black
+  66:	41 15       	cp	r20, r1
+  68:	51 05       	cpc	r21, r1
+  6a:	29 f4       	brne	.+10     	; 0x76 <__SREG__+0x37>
+  6c:	24 30       	cpi	r18, 0x04	; 4
+  6e:	31 05       	cpc	r19, r1
+  70:	49 f7       	brne	.-46     	; 0x44 <__SREG__+0x5>
+		{
+			PORTB=0b00010010;	//LF(B1)=1 LB(B2)=0 RF(B3)=1 RB(B4)=0
+  72:	e8 bb       	out	0x18, r30	; 24
+  74:	e7 cf       	rjmp	.-50     	; 0x44 <__SREG__+0x5>
+		}
+		if(LS==0b00000001 && CS==0b00000010 && RS==0b00000100)		//L=white C=white R=white
+  76:	42 30       	cpi	r20, 0x02	; 2
+  78:	51 05       	cpc	r21, r1
+  7a:	21 f7       	brne	.-56     	; 0x44 <__SREG__+0x5>
+  7c:	24 30       	cpi	r18, 0x04	; 4
+  7e:	31 05       	cpc	r19, r1
+  80:	09 f7       	brne	.-62     	; 0x44 <__SREG__+0x5>
+		{
+			PORTB=0b00001100;	//LF(B1)=0 LB(B2)=1 RF(B3)=1 RB(B4)=0
+  82:	68 bb       	out	0x18, r22	; 24
+  84:	df cf       	rjmp	.-66     	; 0x44 <__SREG__+0x5>
+
+00000086 <_exit>:
+  86:	f8 94       	cli
+
+00000088 <__stop_program>:
+  88:	ff cf       	rjmp	.-2      	; 0x88 <__stop_program>
